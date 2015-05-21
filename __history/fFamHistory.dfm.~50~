@@ -1,0 +1,472 @@
+object frmFamHistory: TfrmFamHistory
+  Left = 0
+  Top = 0
+  Anchors = [akLeft, akTop, akRight, akBottom]
+  Caption = 'Family History '
+  ClientHeight = 617
+  ClientWidth = 1284
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -14
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  Menu = mnuFamHist
+  OldCreateOrder = False
+  OnResize = FormResize
+  PixelsPerInch = 120
+  TextHeight = 17
+  object splitVert: TSplitter
+    Left = 190
+    Top = 0
+    Width = 1
+    Height = 617
+    ExplicitLeft = 231
+  end
+  object pnlMain: TPanel
+    Left = 191
+    Top = 0
+    Width = 1093
+    Height = 617
+    Margins.Left = 4
+    Margins.Top = 4
+    Margins.Right = 4
+    Margins.Bottom = 4
+    Align = alClient
+    Caption = 'pnlFHDlog'
+    ParentBackground = False
+    TabOrder = 0
+    object capLstFamHist: TCaptionListBox
+      AlignWithMargins = True
+      Left = 3140
+      Top = 3477
+      Width = 1043
+      Height = 475
+      Margins.Left = 4
+      Margins.Top = 4
+      Margins.Right = 4
+      Margins.Bottom = 4
+      Style = lbOwnerDrawVariable
+      AutoComplete = False
+      Align = alCustom
+      Color = clWhite
+      ItemHeight = 13
+      Items.Strings = (
+        
+          'Brother        Gus      Living            56-60           Lung C' +
+          'ancer               41-45                                    Dec' +
+          'lined any treatment      12/19/2014         1/23/2015      '
+        
+          'Father         Fred     Deceased                           Prost' +
+          'ate Cancer          71-75                     91+         Passed' +
+          ' away at home        12/22/2014         1/24/2015               ' +
+          '     '
+        
+          'Mother        Fran     Living            66-70            Breast' +
+          ' Cancer             36-50                                    Wor' +
+          'ked in coal mines         12/24/2014       '
+        
+          'Sister         Betty     Living            51/55            Cerv' +
+          'ical Cancer           46-50                                    C' +
+          'ancer is in her family        01/07/2015       ')
+      ParentShowHint = False
+      ShowHint = True
+      Sorted = True
+      TabOrder = 0
+      OnDblClick = capLstFamHistDblClick
+      Caption = 'Active Problems List'
+    end
+    object Panel2: TPanel
+      Left = 1
+      Top = 1
+      Width = 1091
+      Height = 121
+      Align = alTop
+      TabOrder = 2
+      object Label2: TLabel
+        Left = 5
+        Top = 98
+        Width = 158
+        Height = 17
+        Caption = 'Family Disease History List'
+      end
+    end
+    object hc: THeaderControl
+      Left = 1
+      Top = 122
+      Width = 1091
+      Height = 21
+      Hint = 'Age Diagnosed'
+      Sections = <
+        item
+          ImageIndex = -1
+          MaxWidth = 165
+          MinWidth = 165
+          Text = 'Relationship'
+          Width = 165
+        end
+        item
+          FixedWidth = True
+          ImageIndex = -1
+          MaxWidth = 60
+          Text = 'Name'
+          Width = 60
+        end
+        item
+          AllowClick = False
+          FixedWidth = True
+          ImageIndex = -1
+          MaxWidth = 80
+          Text = 'Vital Status'
+          Width = 80
+        end
+        item
+          FixedWidth = True
+          ImageIndex = -1
+          MaxWidth = 85
+          Text = 'Current Age '
+          Width = 85
+        end
+        item
+          FixedWidth = True
+          ImageIndex = -1
+          MaxWidth = 170
+          Text = 'History of'
+          Width = 170
+        end
+        item
+          FixedWidth = True
+          ImageIndex = -1
+          MaxWidth = 75
+          Text = 'Age Diagnosed'
+          Width = 75
+        end
+        item
+          FixedWidth = True
+          ImageIndex = -1
+          MaxWidth = 75
+          Text = 'Age Deceased'
+          Width = 75
+        end
+        item
+          FixedWidth = True
+          ImageIndex = -1
+          MaxWidth = 130
+          Text = 'Comments'
+          Width = 130
+        end
+        item
+          FixedWidth = True
+          ImageIndex = -1
+          MaxWidth = 70
+          Text = ' Entered by'
+          Width = 70
+        end
+        item
+          FixedWidth = True
+          ImageIndex = -1
+          MaxWidth = 80
+          Text = 'Date Modified'
+          Width = 80
+        end
+        item
+          ImageIndex = -1
+          Text = 'Provider'
+          Width = 60
+        end>
+    end
+    object sgfhist: TStringGrid
+      AlignWithMargins = True
+      Left = 4
+      Top = 146
+      Width = 1085
+      Height = 467
+      Align = alClient
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      BorderStyle = bsNone
+      ColCount = 11
+      DrawingStyle = gdsClassic
+      FixedCols = 0
+      RowCount = 1
+      FixedRows = 0
+      GridLineWidth = 0
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goRowSelect]
+      TabOrder = 4
+      OnDblClick = sgfhistDblClick
+    end
+  end
+  object pnlLeft: TPanel
+    Left = 0
+    Top = 0
+    Width = 190
+    Height = 617
+    Align = alLeft
+    TabOrder = 1
+    TabStop = True
+    object splitHorz: TSplitter
+      Left = 1
+      Top = 1
+      Width = 188
+      Height = 3
+      Cursor = crVSplit
+      Align = alTop
+      ExplicitTop = 210
+      ExplicitWidth = 327
+    end
+    object lstView: TORListBox
+      Left = -1
+      Top = 129
+      Width = 226
+      Height = 192
+      Margins.Left = 4
+      Margins.Top = 4
+      Margins.Right = 4
+      Margins.Bottom = 4
+      Style = lbOwnerDrawFixed
+      Columns = 1
+      ItemHeight = 13
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+      Caption = ''
+      ItemTipColor = clWindow
+      LongList = False
+      Pieces = '1'
+      CheckBoxes = True
+      FlatCheckBoxes = False
+    end
+    object pnlButtons: TPanel
+      Left = 2
+      Top = 316
+      Width = 226
+      Height = 45
+      Margins.Left = 4
+      Margins.Top = 4
+      Margins.Right = 4
+      Margins.Bottom = 4
+      TabOrder = 2
+      object btnAddNewHistoryRecord: TORAlignButton
+        Tag = 100
+        Left = 4
+        Top = 10
+        Width = 174
+        Height = 30
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'New Family History'
+        TabOrder = 0
+        OnClick = btnAddNewHistoryRecordClick
+      end
+    end
+    object Panel1: TPanel
+      Left = 1
+      Top = 18
+      Width = 201
+      Height = 56
+      BevelOuter = bvNone
+      TabOrder = 3
+      object Label1: TLabel
+        Left = 5
+        Top = 41
+        Width = 111
+        Height = 17
+        Caption = 'Disease Group List'
+      end
+    end
+  end
+  object mnuFamHist: TMainMenu
+    Left = 707
+    Top = 409
+    object mnuView: TMenuItem
+      Caption = '&View'
+      GroupIndex = 3
+      object mnuViewChart: TMenuItem
+        Caption = 'Chart &Tab'
+        object mnuChartCover: TMenuItem
+          Tag = 1
+          Caption = 'Cover &Sheet'
+          ShortCut = 16467
+        end
+        object mnuChartProbs: TMenuItem
+          Tag = 2
+          Caption = '&Problem List'
+          ShortCut = 16464
+        end
+        object mnuChartMeds: TMenuItem
+          Tag = 3
+          Caption = '&Medications'
+          ShortCut = 16461
+        end
+        object mnuChartOrders: TMenuItem
+          Tag = 4
+          Caption = '&Orders'
+          ShortCut = 16463
+        end
+        object mnuChartNotes: TMenuItem
+          Tag = 6
+          Caption = 'Progress &Notes'
+          ShortCut = 16462
+        end
+        object mnuChartCslts: TMenuItem
+          Tag = 7
+          Caption = 'Consul&ts'
+          ShortCut = 16468
+        end
+        object mnuChartSurgery: TMenuItem
+          Tag = 11
+          Caption = 'S&urgery'
+          ShortCut = 16469
+        end
+        object mnuChartDCSumm: TMenuItem
+          Tag = 8
+          Caption = '&Discharge Summaries'
+          ShortCut = 16452
+        end
+        object mnuChartLabs: TMenuItem
+          Tag = 9
+          Caption = '&Laboratory'
+          ShortCut = 16460
+        end
+        object mnuChartReports: TMenuItem
+          Tag = 10
+          Caption = '&Reports'
+          ShortCut = 16466
+        end
+      end
+      object mnuViewInformation: TMenuItem
+        Caption = 'Information'
+        object mnuViewDemo: TMenuItem
+          Tag = 1
+          Caption = 'De&mographics...'
+        end
+        object mnuViewVisits: TMenuItem
+          Tag = 2
+          Caption = 'Visits/Pr&ovider...'
+        end
+        object mnuViewPrimaryCare: TMenuItem
+          Tag = 3
+          Caption = 'Primary &Care...'
+        end
+        object mnuViewMyHealtheVet: TMenuItem
+          Tag = 4
+          Caption = 'MyHealthe&Vet...'
+        end
+        object mnuInsurance: TMenuItem
+          Tag = 5
+          Caption = '&Insurance...'
+        end
+        object mnuViewFlags: TMenuItem
+          Tag = 6
+          Caption = '&Flags...'
+        end
+        object mnuViewRemoteData: TMenuItem
+          Tag = 7
+          Caption = 'Remote &Data...'
+        end
+        object mnuViewReminders: TMenuItem
+          Tag = 8
+          Caption = '&Reminders...'
+          Enabled = False
+        end
+        object mnuViewPostings: TMenuItem
+          Tag = 9
+          Caption = '&Postings...'
+        end
+      end
+      object Z1: TMenuItem
+        Caption = '-'
+      end
+      object mnuViewActive: TMenuItem
+        Tag = 700
+        Caption = '&Active Problems'
+      end
+      object mnuViewInactive: TMenuItem
+        Tag = 800
+        Caption = '&Inactive Problems'
+      end
+      object mnuViewBoth: TMenuItem
+        Tag = 900
+        Caption = '&Both Active/Inactive Problems'
+      end
+      object mnuViewRemoved: TMenuItem
+        Tag = 950
+        Caption = '&Removed Problems'
+      end
+      object mnuViewFilters: TMenuItem
+        Tag = 975
+        Caption = 'Fi&lters...'
+      end
+      object mnuViewComments: TMenuItem
+        Caption = 'Show &Comments'
+      end
+      object N2: TMenuItem
+        Caption = '-'
+      end
+      object mnuViewSave: TMenuItem
+        Caption = 'Sa&ve as Default View'
+      end
+      object mnuViewRestoreDefault: TMenuItem
+        Caption = 'Return to De&fault View'
+      end
+    end
+    object mnuAct: TMenuItem
+      Caption = '&Action'
+      GroupIndex = 4
+      object mnuActNew: TMenuItem
+        Tag = 100
+        Caption = '&New Problem...'
+      end
+      object Z3: TMenuItem
+        Caption = '-'
+      end
+      object mnuActChange: TMenuItem
+        Tag = 400
+        Caption = '&Change...'
+        Enabled = False
+      end
+      object mnuActInactivate: TMenuItem
+        Tag = 200
+        Caption = '&Inactivate'
+        Enabled = False
+      end
+      object mnuActVerify: TMenuItem
+        Tag = 250
+        Caption = '&Verify...'
+        Enabled = False
+      end
+      object N1: TMenuItem
+        Caption = '-'
+      end
+      object mnuActAnnotate: TMenuItem
+        Tag = 600
+        Caption = '&Annotate...'
+        Enabled = False
+      end
+      object Z4: TMenuItem
+        Caption = '-'
+        Visible = False
+      end
+      object mnuActRemove: TMenuItem
+        Tag = 500
+        Caption = '&Remove'
+        Enabled = False
+      end
+      object mnuActRestore: TMenuItem
+        Tag = 550
+        Caption = 'Re&store'
+        Enabled = False
+      end
+      object N4: TMenuItem
+        Caption = '-'
+      end
+      object mnuActDetails: TMenuItem
+        Tag = 300
+        Caption = 'View &Details'
+        Enabled = False
+      end
+    end
+  end
+end

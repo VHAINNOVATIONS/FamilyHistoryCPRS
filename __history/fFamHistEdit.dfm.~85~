@@ -1,0 +1,790 @@
+object frmFamHistEdit: TfrmFamHistEdit
+  Left = 0
+  Top = -38
+  Align = alCustom
+  Caption = 'Family History - Data Collection'
+  ClientHeight = 590
+  ClientWidth = 1013
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -14
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poDesigned
+  PixelsPerInch = 120
+  TextHeight = 17
+  object pnlMain: TPanel
+    Left = 0
+    Top = 0
+    Width = 1013
+    Height = 590
+    Margins.Left = 4
+    Margins.Top = 4
+    Margins.Right = 4
+    Margins.Bottom = 4
+    Align = alClient
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    object Label9: TLabel
+      Left = 17
+      Top = 10
+      Width = 119
+      Height = 16
+      Margins.Left = 4
+      Margins.Top = 4
+      Margins.Right = 4
+      Margins.Bottom = 4
+      Caption = 'Reason no reply:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label4: TLabel
+      Left = 434
+      Top = 147
+      Width = 232
+      Height = 16
+      Margins.Left = 4
+      Margins.Top = 4
+      Margins.Right = 4
+      Margins.Bottom = 4
+      Caption = 'Family Diseases and Conditions: '
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object memComment: TCaptionMemo
+      Left = 9
+      Top = 357
+      Width = 405
+      Height = 127
+      Margins.Left = 4
+      Margins.Top = 4
+      Margins.Right = 4
+      Margins.Bottom = 4
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 2
+      OnChange = memCommentChange
+      Caption = ''
+    end
+    object btnCancel: TButton
+      Left = 897
+      Top = 493
+      Width = 92
+      Height = 26
+      Margins.Left = 4
+      Margins.Top = 4
+      Margins.Right = 4
+      Margins.Bottom = 4
+      Caption = 'Cancel'
+      TabOrder = 8
+      OnClick = btnCancelClick
+    end
+    object btnOK: TButton
+      Left = 897
+      Top = 459
+      Width = 92
+      Height = 26
+      Margins.Left = 4
+      Margins.Top = 4
+      Margins.Right = 4
+      Margins.Bottom = 4
+      Caption = 'OK'
+      TabOrder = 7
+      OnClick = btnOKClick
+    end
+    object GroupBox2: TGroupBox
+      Left = 11
+      Top = 30
+      Width = 403
+      Height = 323
+      Margins.Left = 0
+      Margins.Top = 0
+      Margins.Right = 0
+      Margins.Bottom = 0
+      Ctl3D = False
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentCtl3D = False
+      ParentFont = False
+      TabOrder = 0
+      StyleElements = [seFont, seClient]
+      OnDblClick = GroupBox2DblClick
+      DesignSize = (
+        403
+        323)
+      object Label10: TLabel
+        Left = 6
+        Top = 213
+        Width = 116
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Jewish Ancestry:'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label7: TLabel
+        Left = 6
+        Top = 148
+        Width = 59
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Ethncity:'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label6: TLabel
+        Left = 4
+        Top = 178
+        Width = 42
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Race:'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        WordWrap = True
+      end
+      object Label5: TLabel
+        Left = 6
+        Top = 122
+        Width = 80
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'First Name:'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clInfoText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label1: TLabel
+        Left = 4
+        Top = 307
+        Width = 77
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Comments:'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object rbNotThisVisit: TRadioButton
+        Left = 3
+        Top = 25
+        Width = 318
+        Height = 17
+        Caption = 'Unknown Life History'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 4
+        OnClick = rbNotThisVisitClick
+      end
+      object rbFHDeclines: TRadioButton
+        Left = 3
+        Top = 5
+        Width = 315
+        Height = 17
+        Caption = 'Patient Declines To Provide Family History'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 5
+        OnClick = rbFHDeclinesClick
+      end
+      object rbFHLimitedFife: TRadioButton
+        Left = 3
+        Top = 44
+        Width = 302
+        Height = 17
+        Caption = 'Patient Has Limited Life Expactancy'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 6
+        OnClick = rbFHLimitedFifeClick
+      end
+      object grpbxJewAnc: TGroupBox
+        Left = 0
+        Top = 233
+        Width = 393
+        Height = 32
+        Margins.Left = 0
+        Margins.Top = 0
+        Margins.Right = 0
+        Margins.Bottom = 0
+        Anchors = [akLeft, akTop, akRight, akBottom]
+        Ctl3D = False
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentCtl3D = False
+        ParentFont = False
+        TabOrder = 3
+        TabStop = True
+        StyleElements = [seFont, seClient]
+        object rbJewAncYes: TRadioButton
+          Left = 12
+          Top = 6
+          Width = 52
+          Height = 22
+          Margins.Left = 4
+          Margins.Top = 4
+          Margins.Right = 4
+          Margins.Bottom = 4
+          Caption = 'Yes'
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+          OnClick = rbJewAncYesClick
+        end
+        object rbJewAncNo: TRadioButton
+          Left = 72
+          Top = 6
+          Width = 52
+          Height = 22
+          Margins.Left = 4
+          Margins.Top = 4
+          Margins.Right = 4
+          Margins.Bottom = 4
+          Caption = 'No'
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 1
+          OnClick = rbJewAncNoClick
+        end
+        object rbJewAncUnknown: TRadioButton
+          Left = 119
+          Top = 6
+          Width = 81
+          Height = 23
+          Margins.Left = 4
+          Margins.Top = 4
+          Margins.Right = 4
+          Margins.Bottom = 4
+          Caption = 'Unknown'
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 2
+          OnClick = rbJewAncUnknownClick
+        end
+        object rbJewishDeclined: TRadioButton
+          Left = 210
+          Top = 6
+          Width = 167
+          Height = 23
+          Margins.Left = 4
+          Margins.Top = 4
+          Margins.Right = 4
+          Margins.Bottom = 4
+          Caption = 'Declined to Answer'
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 3
+          OnClick = rbJewishDeclinedClick
+        end
+      end
+      object ORcmbEthnicity: TORComboBox
+        Left = 94
+        Top = 148
+        Width = 227
+        Height = 24
+        Style = orcsDropDown
+        AutoSelect = True
+        Caption = ''
+        Color = clWindow
+        DropDownCount = 8
+        ItemHeight = 16
+        ItemTipColor = clWindow
+        ItemTipEnable = True
+        ListItemsOnly = False
+        LongList = False
+        LookupPiece = 0
+        MaxLength = 0
+        Pieces = '1'
+        Sorted = False
+        SynonymChars = '<>'
+        TabOrder = 1
+        TabStop = True
+        Text = ''
+        OnChange = ORcmbEthnicityChange
+        CharsNeedMatch = 1
+      end
+      object ORcmbxRace: TORComboBox
+        Left = 95
+        Top = 178
+        Width = 229
+        Height = 24
+        Style = orcsDropDown
+        AutoSelect = True
+        Caption = ''
+        Color = clWindow
+        DropDownCount = 8
+        ItemHeight = 16
+        ItemTipColor = clWindow
+        ItemTipEnable = True
+        ListItemsOnly = False
+        LongList = False
+        LookupPiece = 0
+        MaxLength = 0
+        Pieces = '1'
+        Sorted = False
+        SynonymChars = '<>'
+        TabOrder = 2
+        TabStop = True
+        Text = ''
+        OnChange = ORcmbxRaceChange
+        CharsNeedMatch = 1
+      end
+      object edFHName: TEdit
+        Left = 95
+        Top = 120
+        Width = 149
+        Height = 22
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        TabOrder = 0
+        OnChange = edFHNameChange
+      end
+      object rbAdopted: TRadioButton
+        Left = 3
+        Top = 64
+        Width = 286
+        Height = 17
+        Caption = 'Adopted, Family History Unknown'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 7
+        OnClick = rbAdoptedClick
+      end
+      object rbLimitedTime: TRadioButton
+        Left = 3
+        Top = 84
+        Width = 315
+        Height = 17
+        Caption = 'Insufficient Time, Deferred To Next Visit'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 8
+        OnClick = rbLimitedTimeClick
+      end
+    end
+    object tvDiseases: TTreeView
+      Left = 421
+      Top = 174
+      Width = 454
+      Height = 375
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      HideSelection = False
+      Indent = 19
+      MultiSelect = True
+      ParentFont = False
+      ReadOnly = True
+      RightClickSelect = True
+      TabOrder = 6
+      OnAdvancedCustomDrawItem = tvDiseasesAdvancedCustomDrawItem
+    end
+    object GroupBox3: TGroupBox
+      Left = 431
+      Top = 25
+      Width = 474
+      Height = 115
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 3
+      object Label13: TLabel
+        Left = 4
+        Top = 4
+        Width = 215
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Vital Status - Is Relative Living:'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object lblAgeRelative: TLabel
+        Left = 36
+        Top = 98
+        Width = 5
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Enabled = False
+        Visible = False
+      end
+      object lblAgeDeath: TLabel
+        Left = 249
+        Top = 34
+        Width = 104
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        AutoSize = False
+        Caption = 'Age Deceased'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object lblTypeRelat: TLabel
+        Left = 4
+        Top = 89
+        Width = 149
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Type of Relationship:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label2: TLabel
+        Left = 4
+        Top = 65
+        Width = 124
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Age at Diagnosis:'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label3: TLabel
+        Left = 3
+        Top = 34
+        Width = 86
+        Height = 16
+        Caption = 'Current Age:'
+      end
+      object rbStatusUnknown: TRadioButton
+        Left = 352
+        Top = 2
+        Width = 81
+        Height = 22
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Unknown'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 2
+        TabStop = True
+        OnClick = rbStatusUnknownClick
+      end
+      object rbStatusNo: TRadioButton
+        Left = 292
+        Top = 2
+        Width = 52
+        Height = 22
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'No'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 1
+        TabStop = True
+        OnClick = rbStatusNoClick
+      end
+      object rbStatusYes: TRadioButton
+        Left = 227
+        Top = 2
+        Width = 52
+        Height = 22
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Caption = 'Yes'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 0
+        TabStop = True
+        OnClick = rbStatusYesClick
+      end
+      object cmbxCurrentAge: TORComboBox
+        Left = 0
+        Top = 119
+        Width = 124
+        Height = 24
+        Style = orcsDropDown
+        AutoSelect = True
+        Caption = ''
+        Color = clWindow
+        DropDownCount = 8
+        ItemHeight = 16
+        ItemTipColor = clWindow
+        ItemTipEnable = True
+        ListItemsOnly = False
+        LongList = True
+        LookupPiece = 0
+        MaxLength = 0
+        Pieces = '1'
+        Sorted = False
+        SynonymChars = '<>'
+        TabPositions = '6'
+        TabOrder = 3
+        Text = ''
+        CharsNeedMatch = 1
+      end
+      object cmbxAgeDeceased: TORComboBox
+        Left = 360
+        Top = 30
+        Width = 94
+        Height = 24
+        Style = orcsDropDown
+        AutoSelect = True
+        Caption = ''
+        Color = clWindow
+        DropDownCount = 8
+        ItemHeight = 16
+        ItemTipColor = clWindow
+        ItemTipEnable = True
+        ListItemsOnly = False
+        LongList = False
+        LookupPiece = 0
+        MaxLength = 0
+        Pieces = '1'
+        Sorted = False
+        SynonymChars = '<>'
+        TabPositions = '7'
+        TabOrder = 5
+        TabStop = True
+        Text = ''
+        OnChange = cmbxAgeDeceasedChange
+        CharsNeedMatch = 1
+      end
+      object ORcmbTypeRelat: TORComboBox
+        Left = 160
+        Top = 86
+        Width = 208
+        Height = 24
+        Style = orcsDropDown
+        AutoSelect = True
+        Caption = ''
+        Color = clWindow
+        DropDownCount = 20
+        ItemHeight = 16
+        ItemTipColor = clWindow
+        ItemTipEnable = True
+        ListItemsOnly = False
+        LongList = True
+        LookupPiece = 0
+        MaxLength = 0
+        Pieces = '1'
+        Sorted = False
+        SynonymChars = '<>'
+        TabPositions = '8'
+        TabOrder = 6
+        TabStop = True
+        Text = ''
+        OnChange = ORcmbTypeRelatChange
+        CharsNeedMatch = 1
+      end
+      object ORcmbAgeDX: TORComboBox
+        Left = 161
+        Top = 60
+        Width = 107
+        Height = 24
+        Style = orcsDropDown
+        AutoSelect = True
+        Caption = 'Age at dx'
+        Color = clWindow
+        DropDownCount = 8
+        ItemHeight = 16
+        ItemTipColor = clWindow
+        ItemTipEnable = True
+        ListItemsOnly = False
+        LongList = True
+        LookupPiece = 0
+        MaxLength = 0
+        Pieces = '1'
+        Sorted = False
+        SynonymChars = '<>'
+        TabPositions = '8'
+        TabOrder = 4
+        TabStop = True
+        Text = ''
+        OnChange = ORcmbAgeDXChange
+        CharsNeedMatch = 1
+      end
+      object edCurrAge: TEdit
+        Tag = 7
+        Left = 107
+        Top = 30
+        Width = 72
+        Height = 24
+        Hint = 'Relatives Current Age - Numeric Only'
+        NumbersOnly = True
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 7
+        OnChange = edCurrAgeChange
+      end
+    end
+    object Memo1: TMemo
+      Left = 11
+      Top = 486
+      Width = 404
+      Height = 113
+      Color = clMoneyGreen
+      Enabled = False
+      HideSelection = False
+      ScrollBars = ssBoth
+      TabOrder = 4
+      Visible = False
+    end
+    object btnVerifySelect: TButton
+      Left = 888
+      Top = 544
+      Width = 125
+      Height = 25
+      Caption = 'Verify Selection'
+      TabOrder = 5
+      OnClick = btnVerifySelectClick
+    end
+    object sbMessages: TStatusBar
+      Left = 1
+      Top = 570
+      Width = 1011
+      Height = 19
+      Panels = <>
+      SimplePanel = True
+    end
+  end
+end
