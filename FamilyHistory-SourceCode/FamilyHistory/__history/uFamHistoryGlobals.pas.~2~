@@ -1,0 +1,529 @@
+unit uFamHistoryGlobals;
+
+interface
+
+uses
+  SysUtils, Windows, Messages, Controls, Classes, StdCtrls, ORfn,
+  ORCtrls, Dialogs, Forms, Grids, graphics, ORNet, uConst,
+  uGlobalVar, rCore, uCore, System.Types, rMisc;
+
+type
+  TFamilyHistoryPatientRec = class // one record per patient
+  public
+    PatientDFN: String;
+    // INTERNAL ENTRY NUMBER OF PATIENT IN THE KNR FAMILY HISTORY FILE
+    JewishAncestor: String;
+    // CODES Y=YES, N=NO, U=UNKNOWN,D=DECLINED TO ANSWER.
+    NoReply: String; // D=DECLINED TO PARTICIPATE, U=UNKNOWN FAMILY
+    // HISTORY, L=LIMITED LIFE EXPECTANCY, A=ADOPTED FAMILY HISTORY UNKNOWN, T=INSUFFICIENT TIME DEFERRED to next visit
+    ProviderID: String; // Provider IEN
+    Comments: String;
+    // FREE TEXT COMMENT ON THIS PATIENT.  MAXIMUM OF 80 CHARACTERS.
+    RaceIEN: String; // Race IEN
+    EthnicityIEN: String;
+    // NUMBER/POINTER (IEN) TO KNR FH ETHNICITY FILE (#500007).
+  end;
+
+  TFamilyHistoryRelativeRec = Class
+    PatientDFN: String;
+    PatientICN: String;
+    FirstName: String;
+    RelationshipIEN: String;
+    // INTERNAL ENTRY NUMBER/POINTER TO KNR FH RELATIONSHIP FILE #500013.
+    VitalStatCode: String; // L=LIVING, D=DECEASED, U=UNKNOWN
+    DeceasedAge: String; // AGE AT DEATH, POINTER TO KNR FH AGE FILE.
+    CurrentAge: String;
+    // current age of relative - not sure if we need to track this..
+    Comments: String; // FREE TEXT COMMENT FOR THIS RELATIVE.
+    ProviderID: String; // DUZ.
+    CondName: String;
+
+  end;
+
+  TFamilyHistoryDiseaseRec = Class
+    RelatSegmentIEN: String;
+    // ADDS DISEASE ENTRY FOR A RELATIVE TO FILE 500017.  RELATIVE ENTRY IN FILE
+    AgeAtDXIEN: String;
+    ConditionIEN: String;
+    // KNR DISEASE FILE POINTER, INTERNAL ENTRY NUMBER. - disease condition, sec
+    Comments: String; // COMMENT FOR THIS DISEASE FILE ENTRY.  FREE TEXT.
+    ProviderID: String; // DUZ.
+    TIUNoteIEN: String; // Note IEN
+  End;
+
+
+  // Setters
+
+procedure SetFHReloadedSW(aValue: Boolean);
+procedure SetCanSaveFHRec(aValue: Boolean);
+procedure SetPatRecSavedSW(aValue: Boolean);
+procedure SetRelatRecSavedSW(aValue: Boolean);
+procedure SetRelatSegmentIEN(aValue: String);
+procedure SetDiseaseRecSavedSW(aValue: Boolean);
+
+procedure SetFirstName(aValue: String);
+procedure SetRelationship(aValue: String);
+procedure SetVitalStatus(aValue: String);
+procedure SetAgeDeceased(aValue: String);
+procedure SetComments(aValue: String);
+procedure SetRelativeComments(aValue: String);
+procedure SetDiseaseComments(aValue: String);
+procedure SetCondName(aValue: String);
+procedure SetLastEditedByID(aValue: String);
+procedure SetPatientICN(aValue: String);
+procedure SetPatientDFN(aValue: String);
+procedure SetRace(aValue: String);
+
+procedure SetEthnicity(aValue: String);
+procedure SetNoReply(aValue: String);
+procedure SetCurrentAge(aValue: String);
+procedure SetDiseaseGroups(aValue: TStringList);
+procedure SetCondIEN(aValue: Integer);
+
+procedure SetAgeAtDx(aValue: String);
+procedure SetJewishAncestor(aValue: String);
+// Getters
+function GetPatientDFN: String;
+function GetPatientICN: String;
+function GetFirstName: String;
+function GetRelationship: String;
+function GetVitalStatus: String;
+function GetAgeDeceased: String;
+function GetComments: String;
+function GetRelativeComments: String;
+function GetDiseaseComments: String;
+function GetLastEditedByID: String;
+function GetCondName: String;
+
+function GetRace: String;
+function GetEthnicity: String;
+function GetNoReply: String;
+function GetCurrentAge: String;
+function GetAgeAtDX: String;
+function GetJewishAncestor: String;
+
+function GetFHReloadedData: Boolean;
+function GetCanSaveFHRec: Boolean;
+function GetPatRecSavedSW: Boolean;
+function GetRelatRecSavedSW: Boolean;
+function GetRelatSegmentIEN: String;
+function GetDiseaseRecSavedSW: Boolean;
+
+procedure BuildConvertToIENLists;
+procedure ReleaseIENLists;
+function GetConvertRaceIEN(aValue: String): String;
+function GetConvertEthnicityIEN(aValue: String): String;
+function GetConvertAgeIEN(aValue: String): String;
+function GetConvertRelativeIEN(aValue: String): String;
+
+
+// Gets and sets
+
+implementation
+
+uses rFamHistory;
+
+var
+  uRaceList: TStringList;
+  uEthnicityList: TStringList;
+  uAgeList: TStringList;
+  uRelationList: TStringList;
+  FRelatRecSavedSW: Boolean;
+
+  FHPatientRec: TFamilyHistoryPatientRec;
+  FHRelativeRec: TFamilyHistoryRelativeRec;
+  FHDiseaseRec: TFamilyHistoryDiseaseRec;
+
+procedure Init_Global_Recs;
+begin
+  FHPatientRec := TFamilyHistoryPatientRec.Create;
+  FHRelativeRec := TFamilyHistoryRelativeRec.Create;
+  FHDiseaseRec := TFamilyHistoryDiseaseRec.Create;
+
+  FHPatientRec.Free;
+  FHRelativeRec.Free;
+  FHDiseaseRec.Free;
+end;
+
+function GetConvertRaceIEN(aValue: String): String;
+var
+  i: Integer;
+  strIEN, strName: string;
+begin
+  strName := aValue;
+  for i := 0 to uRaceList.Count - 1 do
+  begin
+    if (strName = Piece(uRaceList.Strings[i], '^', 1)) then
+    begin
+      strIEN := Piece(uRaceList.Strings[i], '^', 2);
+      Break;
+    end;
+  end;
+  Result := strIEN;
+end;
+
+function GetConvertEthnicityIEN(aValue: String): String;
+var
+  i: Integer;
+  strIEN, strName: string;
+begin
+  strName := aValue;
+  for i := 0 to uEthnicityList.Count - 1 do
+  begin
+    if (strName = Piece(uEthnicityList.Strings[i], '^', 1)) then
+    begin
+      strIEN := Piece(uEthnicityList.Strings[i], '^', 2);
+      Break;
+    end;
+  end;
+  Result := strIEN;
+end;
+
+function GetConvertAgeIEN(aValue: String): String;
+var
+  i: Integer;
+  strIEN, strName: string;
+begin
+  strName := aValue;
+  for i := 0 to uAgeList.Count - 1 do
+  begin
+    if (strName = Piece(uAgeList.Strings[i], '^', 1)) then
+    begin
+      strIEN := Piece(uAgeList.Strings[i], '^', 2);
+      Break;
+    end;
+  end;
+  Result := strIEN;
+end;
+
+function GetConvertRelativeIEN(aValue: String): String;
+var
+  i: Integer;
+  strIEN, strName: string;
+begin
+  strName := aValue;
+  for i := 0 to uRelationList.Count - 1 do
+  begin
+    if (strName = Piece(uRelationList.Strings[i], '^', 1)) then
+    begin
+      strIEN := Piece(uRelationList.Strings[i], '^', 2);
+      Break;
+    end;
+  end;
+  Result := strIEN;
+end;
+
+procedure BuildConvertToIENLists;
+var
+  i: Integer;
+  s: String;
+begin
+  uRaceList := TStringList.Create;
+  uEthnicityList := TStringList.Create;
+  uAgeList := TStringList.Create;
+  uRelationList := TStringList.Create;
+
+  uRaceList.Clear;
+  uEthnicityList.Clear;
+  uAgeList.Clear;
+  uRelationList.Clear;
+  // call rpc's build lists
+  FastAssign(GetFHRaces, uRaceList);
+  FastAssign(GetFHEthnicityTypes, uEthnicityList);
+  for i := 0 to uEthnicityList.Count - 1 do
+  begin
+    s := uEthnicityList.Strings[i];
+  end;
+  FastAssign(GetFHAgeRanges, uAgeList);
+  FastAssign(GetFHRelationships, uRelationList);
+
+end;
+
+procedure ReleaseIENLists;
+begin
+  uRaceList.Free;
+  uEthnicityList.Free;
+  uAgeList.Free;
+  uRelationList.Free;
+end;
+
+// Getters   Family History Record
+
+function GetPatientDFN: String;
+begin
+  Result := FHPatientRec.PatientDFN
+end;
+
+function GetFirstName: String;
+begin
+  Result := FHRelativeRec.FirstName;
+end;
+
+function GetRelationship: String;
+begin
+  Result := FHRelativeRec.RelationshipIEN;
+end;
+
+function GetVitalStatus: String;
+begin
+  Result := FHRelativeRec.VitalStatCode;
+end;
+
+function GetAgeDeceased: String;
+begin
+  Result := FHRelativeRec.DeceasedAge;
+end;
+
+function GetComments: String;
+begin
+  Result := FHPatientRec.Comments;
+end;
+
+function GetCondName: String;
+begin
+  Result := FHRelativeRec.CondName;
+end;
+
+function GetLastEditedByID: String; // ProviderID
+begin
+  Result := FHPatientRec.ProviderID;
+end;
+
+function GetRelativeComments: String;
+begin
+  Result := FHRelativeRec.Comments;
+end;
+
+function GetDiseaseComments: String;
+begin
+  Result := FHDiseaseRec.Comments;
+end;
+
+function GetPatientICN: String;
+begin
+  Result := FHRelativeRec.PatientICN;
+end;
+
+function GetEthnicity: String;
+begin
+  Result := FHPatientRec.EthnicityIEN;
+end;
+
+function GetNoReply: String;
+begin
+  Result := FHPatientRec.NoReply;
+end;
+
+function GetCurrentAge: String;
+begin
+  Result := FHRelativeRec.CurrentAge;
+end;
+
+function GetAgeAtDX: String;
+begin
+  Result := FHDiseaseRec.AgeAtDXIEN;
+end;
+
+function GetJewishAncestor: String;
+begin
+  Result := FHPatientRec.JewishAncestor;
+end;
+
+function GetRace: String;
+begin
+  Result := FHPatientRec.RaceIEN;
+end;
+
+function GetFHReloadedData: Boolean;
+begin
+  Result := FHRecReloadedSW;
+end;
+
+function GetCanSaveFHRec: Boolean;
+begin
+  Result := FCanSaveSW;
+end;
+
+function GetPatRecSavedSW: Boolean;
+begin
+  Result := FPatRecSavedSW;
+end;
+
+function GetRelatRecSavedSW: Boolean;
+begin
+  Result := FRelatRecSavedSW;
+end;
+
+function GetRelatSegmentIEN: String;
+begin
+  Result := FHDiseaseRec.RelatSegmentIEN;
+end;
+
+function GetDiseaseRecSavedSW: Boolean;
+begin
+  Result := FDiseaseRecSavedSW;
+end;
+
+// start of Settters
+procedure SetFirstName(aValue: String);
+begin
+  // memo1.Lines.Add('Name   ' + avalue);
+  FHRelativeRec.FirstName := aValue;
+end;
+
+procedure SetRelationship(aValue: String);
+begin
+  // memo1.Lines.Add('relationshipd   ' + avalue);
+  FHRelativeRec.RelationshipIEN := aValue;
+end;
+
+procedure SetVitalStatus(aValue: String);
+begin
+  // memo1.Lines.Add('vital status  ' + avalue);
+  FHRelativeRec.VitalStatCode := aValue;
+end;
+
+procedure SetAgeDeceased(aValue: String);
+begin
+  // memo1.Lines.Add('age deceased  ' + avalue);
+  FHRelativeRec.DeceasedAge := aValue;
+end;
+
+procedure TfrmFamHistEdit.SetComments(aValue: String);
+begin
+  // memo1.Lines.Add('comments  ' + avalue);
+  FHPatientRec.Comments := aValue;
+end;
+
+procedure TfrmFamHistEdit.SetCondName(aValue: String);
+begin
+
+  FHRelativeRec.CondName := aValue;
+end;
+
+procedure SetRelativeComments(aValue: String);
+begin
+  // memo1.Lines.Add('Relative comments  ' + avalue);
+  FHPatientRec.Comments := aValue;
+end;
+
+procedure SetDiseaseComments(aValue: String);
+begin
+  FHDiseaseRec.Comments := aValue;
+end;
+
+procedure SetLastEditedByID(aValue: String);
+begin
+  // memo1.Lines.Add('FHRelativeRec editedbyID  ' + avalue);
+  FHRelativeRec.ProviderID := aValue;
+  FHPatientRec.ProviderID := aValue;
+  FHDiseaseRec.ProviderID := aValue;
+end;
+
+procedure TfrmFamHistEdit.SetPatientDFN(aValue: String);
+begin
+  // memo1.Lines.Add('Patient DFn  ' + avalue);
+  FHRelativeRec.PatientDFN := aValue;
+  FHPatientRec.PatientDFN := aValue;
+end;
+
+procedure TfrmFamHistEdit.SetPatientICN(aValue: String);
+begin
+  // memo1.Lines.Add ('Patient IEN  ' + avalue);
+  FHRelativeRec.PatientICN := aValue;
+end;
+
+procedure TfrmFamHistEdit.SetRace(aValue: String);
+begin
+  FHPatientRec.RaceIEN := aValue;
+end;
+
+procedure TfrmFamHistEdit.SetEthnicity(aValue: String);
+begin
+  // memo1.Lines.Add('ethnicity  ' + avalue);
+  FHPatientRec.EthnicityIEN := aValue;
+end;
+
+procedure TfrmFamHistEdit.SetNoReply(aValue: String);
+begin
+  // memo1.Lines.Add('No Reply  ' + avalue);
+  FHPatientRec.NoReply := aValue;
+end;
+
+procedure TfrmFamHistEdit.SetCurrentAge(aValue: String);
+begin
+  // memo1.Lines.Add('CurrentAge  ' + avalue);
+  FHRelativeRec.CurrentAge := aValue;
+end;
+
+procedure TfrmFamHistEdit.SetDiseaseGroups(aValue: TStringList);
+var
+  i: Integer;
+  myList: TStringList;
+begin
+  { myList := TStringList.Create;
+    myList.Clear;
+    myList.Assign(aValue);
+    for I := 0 to myList.Count-1 do begin
+    FHRec.DiseaseGrps.Add(myList.Strings[i]);
+    end;
+  }
+
+end;
+
+procedure TfrmFamHistEdit.SetCondIEN(aValue: Integer);
+begin
+
+  // FHRec.ConditionIEN := aValue;
+end;
+
+procedure TfrmFamHistEdit.SetAgeAtDx(aValue: String);
+begin
+  // memo1.Lines.Add('DiseaseGrpIEN  ' +avalue);
+  FHDiseaseRec.AgeAtDXIEN := aValue;
+end;
+
+procedure TfrmFamHistEdit.SetJewishAncestor(aValue: String);
+begin
+  FHPatientRec.JewishAncestor := aValue;
+end;
+
+procedure TfrmFamHistEdit.SetFHReloadedSW(aValue: Boolean);
+begin
+  FHRecReloadedSW := aValue;
+end;
+
+procedure TfrmFamHistEdit.SetCanSaveFHRec(aValue: Boolean);
+begin
+  if aValue then
+    memo1.lines.add('can save = true')
+  else
+    memo1.lines.add('can save = false');
+  FCanSaveSW := aValue;
+
+end;
+
+procedure TfrmFamHistEdit.SetPatRecSavedSW(aValue: Boolean);
+begin
+  FPatRecSavedSW := aValue;
+end;
+
+procedure TfrmFamHistEdit.SetRelatRecSavedSW(aValue: Boolean);
+begin
+  FRelatRecSavedSW := aValue;
+end;
+
+procedure SetRelatSegmentIEN(aValue: String);
+begin
+  FHDiseaseRec.RelatSegmentIEN := aValue;
+end;
+
+procedure SetDiseaseRecSavedSW(aValue: Boolean);
+begin
+  FDiseaseRecSavedSW := aValue;
+end;
+
+
+// end of getters and setters
+
+end.

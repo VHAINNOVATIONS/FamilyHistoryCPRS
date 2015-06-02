@@ -1,0 +1,222 @@
+unit rFamHistory;
+
+interface
+
+uses SysUtils, Classes, ORNet, ORFn, Trpcb, fFamHistEdit;
+
+function GetFHDiseaseGrps: TStrings;
+function GetFHRelationships: TStrings;
+function GetFHEthnicityTypes: TStrings;
+function GetFHCDiseaseConditions(AnID: String): TStrings;
+// pass group IEN returns Diseasese in that group
+function GetFHRaces: TStrings;
+function GetFHAgeRanges: TStrings;
+function GetFamHistCoverSheetData(AnPID: String): TStrings;
+function GetPatientsFamilyHistory(AnID: String): TStrings;
+function GetAllFamilyRelativesConditions(AnID: String): TStrings;
+function SaveFHPatientRecord(PatientID: String; Jewish: String; NoReply: String;
+  ProviderID: String; comment: string; Race: String; Ethnicity: String)
+  : TStrings;
+function SaveFHRelativeRecord(PatDFN, FName, RelatIEN, VSCode, DecAge, Comments,
+  aLastEditedBy, aRaceIEN, aEthIEN, aCurrAge: String): TStrings;
+
+function SaveFHDiseaseRecord(aRelatIEN, aAgeAtDx, aCondIEN, aComment,
+  aLastUpdBy: String): TStrings;
+function CreateFHNote(aDFN, aDUZ: String): TStrings;
+function GetAllFamilyHistoryRecords(aDFN: String): TStrings;
+
+// function  SaveRelativeRecord(
+procedure TestKNRCommLink(Dest: TStrings);
+
+implementation
+
+
+uses  uFamHistoryGlobals;
+
+
+procedure TestKNRCommLink(Dest: TStrings);
+
+begin
+  CallV('KNR TEST', [7]);
+  FastAssign(RPCBrokerV.Results, Dest);
+end;
+
+function GetFHEthnicityTypes: TStrings;
+begin
+  CallV('KNR GET ETHNICITY', [nil]);
+  Result := RPCBrokerV.Results;
+end;
+
+function GetFHRaces: TStrings;
+begin
+  CallV('KNR GET RACE', [nil]);
+  Result := RPCBrokerV.Results;
+end;
+
+function GetFHDiseaseGrps: TStrings;
+begin
+  CallV('KNR GET DISEASE GROUPS', [nil]);
+  Result := RPCBrokerV.Results;
+end;
+
+function GetFHAgeRanges: TStrings;
+begin
+  CallV('KNR GET AGE', [nil]);
+  Result := RPCBrokerV.Results;
+end;
+
+function GetFHCDiseaseConditions(AnID: String): TStrings;
+
+begin
+  CallV('KNR GET ONE GROUP', [AnID]); // returns all conditions for TypeID
+  Result := RPCBrokerV.Results;
+end;
+
+function GetFHRelationships: TStrings;
+begin
+  CallV('KNR GET RELATIONSHIPS', [nil]);
+  Result := RPCBrokerV.Results;
+end;
+
+function GetFamHistCoverSheetData(AnPID: String): TStrings;
+var
+  PatientID, mystr: String;
+  i: integer;
+begin
+  RPCBrokerV.ClearParameters := True;
+  PatientID := AnPID; // AnPID;
+  RPCBrokerV.Param[0].PType := literal;
+  RPCBrokerV.Param[0].Value := PatientID;
+
+  RPCBrokerV.RemoteProcedure := 'KNR FH GET COVER SHEET';
+  CallBroker;
+  // for i := 0 to RPCBrokerV.Results.Count-1 do
+  // begin
+  // mystr := RPCBrokerV.Results[i];
+  // end;
+  Result := RPCBrokerV.Results;
+end;
+
+function GetPatientsFamilyHistory(AnID: String): TStrings;
+var
+  stPatID, mystr: String;
+  i: integer;
+begin
+  RPCBrokerV.ClearParameters := True;
+  stPatID := AnID; // AnID;
+  RPCBrokerV.Param[0].PType := literal;
+  RPCBrokerV.Param[0].Value := stPatID;
+
+  RPCBrokerV.RemoteProcedure := 'KNR GETALL FAMILY HISTORY';
+  CallBroker;
+  for i := 0 to RPCBrokerV.Results.Count - 1 do
+  begin
+    mystr := RPCBrokerV.Results[i];
+  end;
+  Result := RPCBrokerV.Results;
+end;
+
+function GetAllFamilyRelativesConditions(AnID: String): TStrings;
+var
+  stPatID, mystr: String;
+  i: integer;
+begin
+  RPCBrokerV.ClearParameters := True;
+  stPatID := AnID; // AnID;
+  RPCBrokerV.Param[0].PType := literal;
+  RPCBrokerV.Param[0].Value := stPatID;
+
+  RPCBrokerV.RemoteProcedure := 'KNR GET REL DISEASE TEXT';
+  CallBroker;
+  for i := 0 to RPCBrokerV.Results.Count - 1 do
+  begin
+    mystr := RPCBrokerV.Results[i];
+  end;
+  Result := RPCBrokerV.Results;
+end;
+
+function SaveFHPatientRecord(PatientID: String; Jewish: String; NoReply: String;
+  ProviderID: String; comment: string; Race: String; Ethnicity: String)
+  : TStrings;
+var
+  i: integer;
+  x: string;
+begin
+  RPCBrokerV.ClearParameters := True;
+  CallV('KNR FH CREATE PATIENT ENTRY', [PatientID, Jewish, NoReply, ProviderID,
+    comment, Race, Ethnicity]);
+  Result := RPCBrokerV.Results;
+  for i := 0 to Result.Count - 1 do
+  begin
+    x := Result.Strings[i];
+  end;
+end;
+
+{ Relative Segment
+  DFN=100047,KNRFNAM="JIM",KNRREL=8,KNRVS="L",KNRAAD="",KNRCOMM="COMMENT",KNRDUZ="1",KNRRACE="3",KNRETH="2"c
+}
+
+function SaveFHRelativeRecord(PatDFN, FName, RelatIEN, VSCode, DecAge, Comments,
+  aLastEditedBy, aRaceIEN, aEthIEN, aCurrAge: String): TStrings;
+var
+  i: integer;
+  x: string;
+begin
+
+  RPCBrokerV.ClearParameters := True;
+  CallV('KNR ADD RELATIVE', [PatDFN, FName, RelatIEN, VSCode, DecAge, Comments,
+    aLastEditedBy, aRaceIEN, aEthIEN, aCurrAge]);
+
+  Result := RPCBrokerV.Results;
+  for i := 0 to Result.Count - 1 do
+  begin
+    x := Result.Strings[i];
+  end;
+
+end;
+
+{ relatRecIEN   age@DX      DiseaseIEN            comment         user.duz
+  Disease Segment CPRS30 4d1>S KNRREL="3",KNRAADI="14",KNRDIS="45",KNRCOMM="DISEASECOMMENT",KNRDUZ="1"
+
+}
+
+function SaveFHDiseaseRecord(aRelatIEN, aAgeAtDx, aCondIEN, aComment,
+  aLastUpdBy: String): TStrings;
+var
+  i: integer;
+  x: string;
+begin
+  RPCBrokerV.ClearParameters := True;
+  CallV('KNR ADD DISEASE', [aRelatIEN, aAgeAtDx, aCondIEN, aComment,
+    aLastUpdBy]);
+  Result := RPCBrokerV.Results;
+  for i := 0 to Result.Count - 1 do
+  begin
+    x := Result.Strings[i];
+    if Piece(x, '^', 1) = '1' then
+      FDiseaseRecSavedSW := True;
+  end;
+end;
+
+function CreateFHNote(aDFN, aDUZ: String): TStrings;
+var
+  i: integer;
+  x: string;
+begin
+  RPCBrokerV.ClearParameters := True;
+  CallV('KNR CREATE FH NOTE', [aDFN, aDUZ]);
+  Result := RPCBrokerV.Results;
+  for i := 0 to Result.Count - 1 do
+  begin
+    x := Result.Strings[i];
+  end;
+end;
+
+function GetAllFamilyHistoryRecords(aDFN: String): TStrings;
+begin
+  RPCBrokerV.ClearParameters := True;
+  CallV('KNR GET REL DISEASE TEXT', [aDFN]); // aDFN
+  Result := RPCBrokerV.Results;
+end;
+
+end.

@@ -112,8 +112,10 @@ type
     function FoundHistRecMatch(var aRelative, aName, aVStatus,
       aCond: String): boolean;
     procedure RefreshHistoryListing;
-    function BuildDiseaseCondMaster:TStringList;
-    procedure LoadFilteredDiseaseList(aList:TStrings);
+    function BuildDiseaseCondMaster: TStrings;
+    function GetFilteredDiseaseList(aList: TStrings): TStrings;
+    function GetFilterdRecs(aList: TStrings): TStrings;
+    function LoadFilterdRecs(aList: TStrings): boolean;
 
   public
 
@@ -126,7 +128,7 @@ type
 
 var
   frmFamHistory: TfrmFamHistory;
-  slCommTest: TStrings;
+  slCommTest,fSelectedFilters: TStrings;
   fAllFamHistory: TStringList;
   tmpRelat, tmpName, tmpStatus, tmpCurrAge, tmpDisease, tmpAgeDx, tmpDied,
     tmpComments: string;
@@ -155,7 +157,6 @@ const
   cComments = 7;
   cEnteredBy = 8;
   cDateMod = 9;
-  cModBy = 10;
 
 procedure TfrmFamHistory.btnCancelClick(Sender: TObject);
 begin
@@ -164,9 +165,6 @@ begin
 end;
 
 procedure TfrmFamHistory.DisplayPage;
-var
-  i: Integer;
-  thisStr: string;
 begin
   inherited DisplayPage;
   frmFrame.ShowHideChartTabMenus(mnuViewChart);
@@ -228,35 +226,40 @@ begin
   hc.Sections[7].Width := 140; // comments
   hc.Sections[8].Width := 85; // Entered by
   hc.Sections[9].Width := 110; // Date Modified
- // hc.Sections[10].Width := 75; // Modified by
+  // hc.Sections[10].Width := 75; // Modified by
 
   // sgfhist.ColWidths[0] := hc.Sections[0].width+ hc.Sections[1].width+hc.Sections[2].width+2;
-  sgfhist.ColWidths[0]  := hc.Sections[0].Width;
-  sgfhist.ColWidths[1]  := hc.Sections[1].Width;
-  sgfhist.ColWidths[2]  := hc.Sections[2].Width;
-  sgfhist.ColWidths[3]  := hc.Sections[3].Width + 5;
-  sgfhist.ColWidths[4]  := hc.Sections[4].Width;
-  sgfhist.ColWidths[5]  := hc.Sections[5].Width;
-  sgfhist.ColWidths[6]  := hc.Sections[6].Width;
-  sgfhist.ColWidths[7]  := hc.Sections[7].Width;
-  sgfhist.ColWidths[8]  := hc.Sections[8].Width;
-  sgfhist.ColWidths[9]  := hc.Sections[9].Width;
-//  sgfhist.ColWidths[10] := hc.Sections[10].Width;
-   if Height > Screen.Height then
-     Height := Screen.Height;
+  sgfhist.ColWidths[0] := hc.Sections[0].Width;
+  sgfhist.ColWidths[1] := hc.Sections[1].Width;
+  sgfhist.ColWidths[2] := hc.Sections[2].Width;
+  sgfhist.ColWidths[3] := hc.Sections[3].Width + 5;
+  sgfhist.ColWidths[4] := hc.Sections[4].Width;
+  sgfhist.ColWidths[5] := hc.Sections[5].Width;
+  sgfhist.ColWidths[6] := hc.Sections[6].Width;
+  sgfhist.ColWidths[7] := hc.Sections[7].Width;
+  sgfhist.ColWidths[8] := hc.Sections[8].Width;
+  sgfhist.ColWidths[9] := hc.Sections[9].Width;
+  // sgfhist.ColWidths[10] := hc.Sections[10].Width;
+  if Height > Screen.Height then
+    Height := Screen.Height;
 
 end;
 
 procedure TfrmFamHistory.LoadAllFamilyHistoryRecs;
 var
-  i, RowCount, r, j: Integer;
-  aUpdByName, X, adjRight: string;
-  NewColumn: TListColumn;
-  ListItem: TListItem;
-  ListView: TListView;
+  i, ii, r: Integer;
+  X: string;
   aFHRec: TStringList;
-
 begin
+  for ii := 0 to lstView.Items.Count - 1 do
+  begin
+    if (lstView.Checked[ii]) then
+    begin
+      lstViewClick(self);
+      exit;
+    end;
+  end;
+
   ClearHistGrid;
   aFHRec := TStringList.Create;
   aFHRec.Clear;
@@ -264,7 +267,8 @@ begin
 
   with sgfhist do
   begin
-    if aFHRec.Count = 0 then exit;
+    if aFHRec.Count = 0 then
+      exit;
     r := 0;
     RowCount := aFHRec.Count + 1;
     for i := 0 to aFHRec.Count - 1 do
@@ -284,7 +288,7 @@ begin
         Cells[cComments, r] := Piece(aFHRec[i], U, 6);
         Cells[cEnteredBy, r] := Piece(aFHRec[i], U, 8);
         Cells[cDateMod, r] := Piece(aFHRec[i], U, 17);
-   //     Cells[cModBy, r] := Piece(aFHRec[i], U, 18);
+        // Cells[cModBy, r] := Piece(aFHRec[i], U, 18);
         inc(r);
         sgfhist.RowCount := r;
       end;
@@ -326,7 +330,7 @@ end;
 
 procedure TfrmFamHistory.RefreshHistoryListing;
 begin
-   LoadAllFamilyHistoryRecs;
+  LoadAllFamilyHistoryRecs;
 end;
 
 procedure TfrmFamHistory.btnAddNewHistoryRecordClick(Sender: TObject);
@@ -364,6 +368,7 @@ procedure TfrmFamHistory.LoadFHDiseaseGroups;
 begin
   lstView.Clear;
   lstView.CheckBoxes := True;
+  // lstView.Checked[-1] := False;
   FastAssign(GetFHDiseaseGrps, lstView.Items);
 end;
 
@@ -376,27 +381,45 @@ end;
 
 procedure TfrmFamHistory.lstViewClick(Sender: TObject);
 var
-i,j:integer;
-x:string;
-aList:TStrings;
+  i, j,g: Integer;
+  X: string;
+  aList, aNewList, aFilters: TStrings;
 begin
   inherited;
-  aList:= TStringList.Create;
+  aList := TStringList.Create;
+  aNewList := TStringList.Create;
+  aFilters := TStringList.Create;
   aList.Clear;
-  for i := 0 to lstView.Items.Count-1 do
-  begin
-    if (lstView.Checked[i]) then
-//    if(lstView.Selected[i]) then
+  aFilters.Clear;
+  aNewList.Clear;
+  try
+    for i := 0 to lstView.Items.Count - 1 do
     begin
+      if (lstView.Checked[i]) then
+      begin
+        aList.Add(lstView.Items[i]);
+      end;
+    end;
+    // use selected Disease Groups use the Groups IEN and Cond IEN
+    // to get all Conditions whos IEN = Disease Group IEN, use that list
+    // to build the new list, display to user
+    if aList.Count > 0 then
+    begin
+    //get all conditions in the selected Disease Group selected by user
+     aFilters.Assign(GetFilteredDiseaseList(aList));
+     g := aFilters.Count;
+      aNewlist.Assign(GetFilterdRecs(aFilters));
+      g := aNewList.Count;
+      if not LoadFilterdRecs(aNewList) then
+        ShowMessage('Error occured loading filtered records.');
 
-      aList.Add(lstView.Items[i]);
     end;
+  finally
+    aList.Free;
+    aNewList.Free;
+    aFilters.Free;
   end;
-  for j := 0 to aList.Count-1 do
-    begin
-      x := aList.Strings[j];
-    end;
-    LoadFilteredDiseaseList(aList);
+
 end;
 
 procedure TfrmFamHistory.lv1MouseMove(Sender: TObject; Shift: TShiftState;
@@ -514,103 +537,173 @@ begin
   end;
 end;
 
-
-
-procedure TfrmFamHistory.LoadFilteredDiseaseList(aList:TStrings);
+function TfrmFamHistory.GetFilteredDiseaseList(aList: TStrings): TStrings;
 var
-  disGrp, disType, GrpType, GrpIEN, TypeIEN,
-  X, holdName, holdRelat, holdVStatus, holdCond: string;
-  i,ii,f: Integer;
-  tmpList,aDiseases,aFilters: TStrings;
-  ADiseaseCondMaster:TStringList;
+  aLookat, aHoldCode, aKeepCond, aTemp, aFilterCode: string;
+  i, f, ii: Integer;
+  aPatientList, aFilters, aSelectedFilters: TStrings;
+  ADiseaseCondMaster: TStrings;
 
 begin
   ADiseaseCondMaster := TStringList.Create;
-  ADiseaseCondMaster.Clear;
-  ADiseaseCondMaster.Assign(BuildDiseaseCondMaster);
-  tmpList := TStringList.Create;
-  aDiseases := TStringList.Create;
   aFilters := TStringList.Create;
-  ADiseaseCondMaster := TStringList.Create;
-
-  tmpList.Clear;
-  aDiseases.Clear;
   ADiseaseCondMaster.Clear;
   aFilters.Clear;
 
-  aFilters.Assign(aList);
-  FastAssign(GetAllFamilyHistoryRecords(Patient.DFN), tmpList);
-
-
+  aFilters.Assign(aList);//  --> user selected disease group(s)
+  FastAssign(BuildDiseaseCondMaster, ADiseaseCondMaster);
   try
+    // convert filter Group to Conditions from Disease Master
     begin
-      for ii := 0 to ADiseaseCondMaster.Count - 1 do
-          begin
-           x := ADiseaseCondMaster[ii];
-          end;
-         for f := 0 to aFilters.Count - 1 do
-          begin
-           x := aFilters[f];
-          end;
-
-      for i := 0 to tmpList.Count - 1 do
+      for f := 0 to aFilters.Count - 1 do
       begin
-        X := tmpList[i];
-        if X = '1' then
-          continue
-        else
+        aFilterCode := Piece(aFilters[f], '^', 2);
+        for i := 0 to ADiseaseCondMaster.Count - 1 do
         begin
-
-          holdCond := Piece(tmpList[i], U, 15);
-
+          aTemp := Piece(ADiseaseCondMaster.Strings[i], '^', 2);
+          aHoldCode := Piece(aTemp, ':', 2);
+          if aFilterCode = aHoldCode then
+          begin
+            aKeepCond := Piece(ADiseaseCondMaster.Strings[i], '^', 3);
+            fSelectedFilters.Add(aKeepCond);
+          end;
         end;
-        end;
+         Result := fSelectedFilters;
+    end;
+
     end;
   finally
-    tmpList.Free;
-    aDiseases.Free;
+    aSelectedFilters.Free;
     aFilters.Free;
+    ADiseaseCondMaster.Free;
   end;
 end;
 
-function TfrmFamHistory.BuildDiseaseCondMaster:TStringList;
+function TfrmFamHistory.BuildDiseaseCondMaster: TStrings;
 var
-AGroups,AnewList:TStringList;
-AMasterDetail:TStringList;
-i,ii:integer;
-AdisGrp,Acond:String;
+  AGroups, aNewList: TStringList;
+  AMasterDetail: TStrings;
+  i, ii: Integer;
+  AdisGrp, aCond: String;
 begin
-  AnewList := TStringList.Create;
+  aNewList := TStringList.Create;
   AGroups := TStringList.Create;
   AMasterDetail := TStringList.Create;
-  AnewList.Clear;
+  aNewList.Clear;
   AGroups.Clear;
   AMasterDetail.Clear;
 
   FastAssign(GetFHDiseaseGrps, AGroups);
 
-  for I := 0 to AGroups.Count - 1 do
+  for i := 0 to AGroups.Count - 1 do
   begin
-   AdisGrp := AGroups[I];
-   if Length(AdisGrp) > 0 then
+    AdisGrp := AGroups[i];
+    if Length(AdisGrp) > 0 then
     begin // get items for that group and add to list
-      FastAssign(GetFHCDiseaseConditions(Piece(AdisGrp, '^', 2)), AnewList);
-      for ii := 0 to AnewList.Count - 1 do
+      FastAssign(GetFHCDiseaseConditions(Piece(AdisGrp, '^', 2)), aNewList);
+      for ii := 0 to aNewList.Count - 1 do
       begin
-        Acond := AnewList[ii];
-        AMasterDetail.Add(AdisGrp + ':' + Acond);
+        aCond := aNewList[ii];
+        AMasterDetail.Add(AdisGrp + ':' + aCond);
       end;
     end;
   end;
-   Result :=AMasterDetail;
+  Result := AMasterDetail;
+end;
+
+function TfrmFamHistory.GetFilterdRecs(aList: TStrings): TStrings;
+var
+  i, ii,iii: Integer;
+  aCompareToCond, aKeyCond,x: String;
+  aFilteredDisList, aPatHistList, aNewHistList: TStrings;
+begin
+  try
+    aFilteredDisList := TStringList.Create;
+    aFilteredDisList.Clear;
+    aPatHistList := TStringList.Create;
+    aPatHistList.Clear;
+    aNewHistList := TStringList.Create;
+    aNewHistList.Clear;
+    // list of conditions used to filter History recs displayed
+    aFilteredDisList.Assign(aList);
+    // Patients total Fam History list to be filtered.
+    FastAssign(GetAllFamilyHistoryRecords(Patient.DFN), aPatHistList);
+    for i := 0 to aFilteredDisList.Count - 1 do
+    begin
+      aKeyCond := aFilteredDisList[i];
+      for ii := 0 to aPatHistList.Count - 1 do
+      begin
+        aCompareToCond := Piece(aPatHistList[ii], '^', 15);
+        if aKeyCond = aCompareToCond then
+        begin
+          aNewHistList.Add(aPatHistList[ii]);
+        end;
+      end;
+      for iii := 0 to aNewHistList.Count-1 do
+        x := aNewHistList.Strings[iii];
+      Result.Assign(aNewHistList);
+    end;
+  finally
+    aFilteredDisList.Free;
+    aPatHistList.Free;
+    aNewHistList.Free;
+  end;
+
+end;
+
+function TfrmFamHistory.LoadFilterdRecs(aList: TStrings): boolean;
+var
+  i, r: Integer;
+  X: string;
+  aNewFHRec: TStrings;
+begin
+  Result := False;
+  aNewFHRec := TStringList.Create;
+  aNewFHRec.Clear;
+  aNewFHRec.Assign(aList);
+  try
+    with sgfhist do
+    begin
+      if aNewFHRec.Count = 0 then
+        exit;
+      r := 0;
+      RowCount := aNewFHRec.Count + 1;
+      for i := 0 to aNewFHRec.Count - 1 do
+      begin
+        X := aNewFHRec[i];
+        if X = '1' then
+          continue
+        else
+        begin
+          Cells[cRelatiive, r] := Piece(aNewFHRec[i], U, 3);
+          Cells[cName, r] := Piece(aNewFHRec[i], U, 2);
+          Cells[cVStat, r] := Piece(aNewFHRec[i], U, 4);
+          Cells[cCurrAge, r] := Piece(aNewFHRec[i], U, 12);
+          Cells[cHistOf, r] := Piece(aNewFHRec[i], U, 15);
+          Cells[cAgeDx, r] := Piece(aNewFHRec[i], U, 14);
+          Cells[cAgeDied, r] := Piece(aNewFHRec[i], U, 5);
+          Cells[cComments, r] := Piece(aNewFHRec[i], U, 6);
+          Cells[cEnteredBy, r] := Piece(aNewFHRec[i], U, 8);
+          Cells[cDateMod, r] := Piece(aNewFHRec[i], U, 17);
+          inc(r);
+          sgfhist.RowCount := r;
+        end;
+      end;
+      Result := True;
+    end;
+  finally
+    aNewFHRec.Free;
+  end;
 end;
 
 initialization
 
 SpecifyFormIsNotADialog(TfrmFamHistory);
+fSelectedFilters.Create;
+fSelectedFilters.Clear;
 
 finalization
-
+fSelectedFilters.Free;
 frmFamHistory.Release;
 
 end.
