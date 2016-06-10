@@ -119,24 +119,45 @@ h
 EOE
 
 # install XXXXXXXX ~KNR FAMILY HISTORY 1.0 KIDS into VistA
+cp /vagrant/provision/cache/FAMHX_1_0.KID /srv/mgr/
+cp /vagrant/provision/cache/KRN_1_0.KID /srv/mgr/
+sudo dos2unix /srv/mgr/*.KID
+
+#csession CACHE -UVISTA "^ZU" <<EOI
+#cprs1234
+#cprs4321$
+#^^load a distribution
+#/srv/mgr/KRN_1_0.KID
+#yes
+#^^install package
+#KNR FAMILY HISTORY 1.0
+#no
+#no
+#
+#^
+#^
+#h
+#EOI
+
 # todo: this doesn't work because it doesn't see device(0) ~something with c-vt320? vt320 doesn't 
 # work either...
-cp /vagrant/OtherComponents/VistAConfig/VEFB_1_2.KID /srv/mgr/
-csession CACHE -UVISTA "^ZU" <<EOI
-cprs1234
-cprs4321$
-^^load a distribution
-/srv/mgr/VEFB_1_2.KID
-yes
-^^install package
-VEFB 1.2
-no
-no
-
-^
-^
-h
-EOI
+#
+#cp /vagrant/OtherComponents/VistAConfig/VEFB_1_2.KID /srv/mgr/
+#csession CACHE -UVISTA "^ZU" <<EOI
+#cprs1234
+#cprs4321$
+#^^load a distribution
+#/srv/mgr/VEFB_1_2.KID
+#yes
+#^^install package
+#VEFB 1.2
+#no
+#no
+#
+#^
+#^
+#h
+#EOI
 
 # user notifications 
 echo VistA is now installed.  

@@ -52,6 +52,13 @@ Afterwards, you can build the machine in AWS as follows:
 vagrant up --provider=aws
 ```
 
+KIDS Installations
+------------------
+There are two KIDS to install in the CACHE instance's VISTA namespace.
+```
+KRN_1_0.KID
+FAMHX_1_0.KID
+```
 To connect to roll and scroll VistA to install Family History KIDS build for RAPTOR
 ```
 vagrant ssh
@@ -72,7 +79,7 @@ D ^ZU
 Enter access/verify code pair: CPRS1234/CPRS4321$
 ```
 Select Systems Manager Menu <TEST ACCOUNT> Option: ^^load a distribution
-Enter a Host File: /srv/mgr/XXXXXXXXX.KID
+Enter a Host File: /srv/mgr/FAMHX_1_0.KID
 
 Select Installation <TEST ACCOUNT> Option: INSTALL Package(s)
 Select INSTALL NAME: KNR FAMILY HISTORY 1.0      9/9/15@23:32:19
